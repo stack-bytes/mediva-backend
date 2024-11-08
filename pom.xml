@@ -22,7 +22,6 @@
         <developer/>
     </developers>
     <modules>
-        <module>prescription-service</module>
         <module>illness-service</module>
     </modules>
     <scm>
