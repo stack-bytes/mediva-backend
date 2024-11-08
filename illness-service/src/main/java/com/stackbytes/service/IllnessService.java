@@ -56,12 +56,12 @@ public class IllnessService {
 
     public Boolean addSymptom(String illnessId, String symptomId) {
 
-        // Perform Symptom Validation
-
+        // Perform Symptom Validation - TODO: Break Circuit
         try{
             ResponseEntity<Boolean> symptomExists = restTemplate.getForEntity(SymptomServiceAddress  + "verify?symptomId=" + symptomId, Boolean.class);
 
-
+            if(!symptomExists.getBody().booleanValue())
+                return false;
         } catch (HttpClientErrorException e) {
             System.out.println("Symptom does not exist");
             return false;
@@ -69,6 +69,8 @@ public class IllnessService {
             System.out.println("Symptom service down");
             // TODO: LOCAL CACHING
             return false;
+        } catch (NullPointerException e){
+            System.out.println("No body");
         }
 
 

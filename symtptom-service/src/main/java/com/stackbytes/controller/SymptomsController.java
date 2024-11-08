@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/")
 public class SymptomsController {
@@ -27,12 +29,14 @@ public class SymptomsController {
 
     @CrossOrigin
     @PostMapping()
-    public ResponseEntity<SymptomCreateResponseDto> createSymptom(@RequestBody SymptomCreateRequestDto requestDto) {
-        Pair<SymptomCreateResponseDto, Boolean> symptomResponseDtoStatus = symptomService.createSymptom(requestDto);
+    public ResponseEntity<List<SymptomCreateResponseDto>> createSymptom(@RequestBody List<SymptomCreateRequestDto> requestDto) {
+        Pair<List<SymptomCreateResponseDto>, Boolean> symptomResponseDtoStatus = symptomService.createSymptom(requestDto);
 
         return symptomResponseDtoStatus.getSecond() ?
                 ResponseEntity.ok(symptomResponseDtoStatus.getFirst()) :
                 ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
+
+    // WS Endpoint Live Notifs
 
 }
