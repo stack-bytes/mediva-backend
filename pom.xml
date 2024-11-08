@@ -23,6 +23,7 @@
     </developers>
     <modules>
         <module>illness-service</module>
+        <module>prescription-service</module>
     </modules>
     <scm>
         <connection/>
