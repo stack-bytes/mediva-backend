@@ -4,9 +4,7 @@ import com.stackbytes.model.dto.PrescriptionCreateRequestDto;
 import com.stackbytes.model.dto.PrescriptionCreateResponseDto;
 import com.stackbytes.service.PrescriptionService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/")
@@ -18,6 +16,8 @@ public class PrescriptionController {
         this.prescriptionService = prescriptionService;
     }
 
+    @CrossOrigin
+    @PostMapping()
     public ResponseEntity<PrescriptionCreateResponseDto> createPrescription(@RequestBody PrescriptionCreateRequestDto prescriptionCreateRequestDto) {
         return ResponseEntity.ok(prescriptionService.createPrescription(prescriptionCreateRequestDto));
     }
