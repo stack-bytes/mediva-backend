@@ -1,22 +1,16 @@
-package com.stackbytes.model;
+package com.stackbytes.model.dto;
 
+import com.stackbytes.model.Illness;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.Data;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
 
-
+@Data
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Document(collection = "illnesses")
-public class Illness {
-    @Id
+public class IllnessGetResponseDto{
     private String id;
 
     private String name;
@@ -26,5 +20,4 @@ public class Illness {
     private String prescriptionId;
     private List<String> symptomsId;
     private List<String> tags;
-
 }
