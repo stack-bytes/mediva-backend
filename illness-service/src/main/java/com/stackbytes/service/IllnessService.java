@@ -9,7 +9,11 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,13 +21,16 @@ import java.util.List;
 @Service
 public class IllnessService {
 
+    private final String SymptomServiceAddress = "http://localhost:8084/";
 
     /* Templates */
 
     private final MongoTemplate mongoTemplate;
+    private final RestTemplate restTemplate;
 
-    IllnessService(MongoTemplate mongoTemplate) {
+    IllnessService(MongoTemplate mongoTemplate, RestTemplate restTemplate) {
         this.mongoTemplate = mongoTemplate;
+        this.restTemplate = restTemplate;
     }
 
     public IllnessCreateResponseDto createIllness(IllnessCreateRequestDto illnessCreateRequestDto) {
@@ -48,6 +55,24 @@ public class IllnessService {
     }
 
     public Boolean addSymptom(String illnessId, String symptomId) {
+
+        // Perform Symptom Validation
+
+        try{
+            ResponseEntity<Boolean> symptomExists = restTemplate.getForEntity(SymptomServiceAddress  + "verify?symptomId=" + symptomId, Boolean.class);
+
+
+        } catch (HttpClientErrorException e) {
+            System.out.println("Symptom does not exist");
+            return false;
+        } catch (RestClientException e) {
+            System.out.println("Symptom service down");
+            // TODO: LOCAL CACHING
+            return false;
+        }
+
+
+
         Query query = Query.query(Criteria.where("_id").is(illnessId));
         Update update = new Update().addToSet("symptomsId", symptomId);
 

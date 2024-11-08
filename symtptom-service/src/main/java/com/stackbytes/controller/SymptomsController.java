@@ -19,9 +19,10 @@ public class SymptomsController {
     }
 
 
+    @CrossOrigin
     @GetMapping("verify")
-    public Boolean verifySymptom(@RequestParam String symptomId){
-        return symptomService.verifySymptom(symptomId);
+    public ResponseEntity<Boolean> verifySymptom(@RequestParam String symptomId){
+        return ResponseEntity.ok(symptomService.verifySymptom(symptomId));
     }
 
     @CrossOrigin
