@@ -6,5 +6,5 @@ import lombok.Data;
 @Builder
 @Data
 public class IllnessCreateResponseDto {
-    private String status;
+    private String id;
 }

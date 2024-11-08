@@ -37,7 +37,7 @@ public class IllnessController {
     public ResponseEntity<String> addSymptom(@RequestParam String illnessId, @RequestParam String symptomId) {
         return illnessService.addSymptom(illnessId, symptomId) ?
                 ResponseEntity.ok("Symptom added succesfully") :
-                ResponseEntity.status(HttpStatus.NOT_FOUND).body("Symptom not found");
+                ResponseEntity.status(HttpStatus.NOT_FOUND).body("Could not add symptom");
     }
 
 }

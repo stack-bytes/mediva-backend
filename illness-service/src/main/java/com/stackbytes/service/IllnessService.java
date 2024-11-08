@@ -33,21 +33,23 @@ public class IllnessService {
                 .doctorId(illnessCreateRequestDto.getDoctorId())
                 .pacientId(illnessCreateRequestDto.getPacientId())
                 .tags(illnessCreateRequestDto.getTags())
+                .symptomsId(illnessCreateRequestDto.getSymptomsId())
                 .prescriptionId(illnessCreateRequestDto.getPrescriptionId())
                 .build();
 
         Illness createdObject = mongoTemplate.insert(newIllnessObject);
 
-        IllnessCreateResponseDto illnessCreateResponse = IllnessCreateResponseDto.builder()
-                .status("Illness added succesfully")
+        IllnessCreateResponseDto createdIllnessDto = IllnessCreateResponseDto.builder()
+                .id(createdObject.getId())
                 .build();
 
-        return illnessCreateResponse;
+        return createdIllnessDto;
+
     }
 
     public Boolean addSymptom(String illnessId, String symptomId) {
         Query query = Query.query(Criteria.where("_id").is(illnessId));
-        Update update = new Update().addToSet("symptomId", symptomId);
+        Update update = new Update().addToSet("symptomsId", symptomId);
 
         UpdateResult updatedObject = mongoTemplate.updateFirst(query, update, Illness.class);
 
