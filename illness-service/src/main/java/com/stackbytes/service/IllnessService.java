@@ -1,5 +1,6 @@
 package com.stackbytes.service;
 
+import com.mongodb.client.result.UpdateResult;
 import com.stackbytes.model.Illness;
 import com.stackbytes.model.dto.IllnessCreateRequestDto;
 import com.stackbytes.model.dto.IllnessCreateResponseDto;
@@ -7,6 +8,7 @@ import com.stackbytes.model.dto.IllnessGetResponseDto;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -41,6 +43,15 @@ public class IllnessService {
                 .build();
 
         return illnessCreateResponse;
+    }
+
+    public Boolean addSymptom(String illnessId, String symptomId) {
+        Query query = Query.query(Criteria.where("_id").is(illnessId));
+        Update update = new Update().addToSet("symptomId", symptomId);
+
+        UpdateResult updatedObject = mongoTemplate.updateFirst(query, update, Illness.class);
+
+        return updatedObject.getMatchedCount() > 0;
     }
 
     public List<IllnessGetResponseDto> getIllness(String userId) {
