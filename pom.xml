@@ -25,6 +25,8 @@
         <module>illness-service</module>
         <module>prescription-service</module>
         <module>symtptom-service</module>
+        <module>appointment-service</module>
+        <module>shared</module>
     </modules>
     <scm>
         <connection/>

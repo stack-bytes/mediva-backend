@@ -1,7 +1,6 @@
-package com.stackbytes.model;
+package com.stackbytes.model.dto;
 
 import lombok.Data;
-import org.springframework.data.annotation.Id;
 
 import java.util.List;
 

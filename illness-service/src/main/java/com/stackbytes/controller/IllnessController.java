@@ -1,8 +1,8 @@
 package com.stackbytes.controller;
 
-import com.stackbytes.model.IllnessCreateRequestDto;
-import com.stackbytes.model.IllnessCreateResponseDto;
-import com.stackbytes.model.IllnessGetResponseDto;
+import com.stackbytes.model.dto.IllnessCreateRequestDto;
+import com.stackbytes.model.dto.IllnessCreateResponseDto;
+import com.stackbytes.model.dto.IllnessGetResponseDto;
 import com.stackbytes.service.IllnessService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
