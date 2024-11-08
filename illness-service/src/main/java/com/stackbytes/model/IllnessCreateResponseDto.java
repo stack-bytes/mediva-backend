@@ -1,4 +1,4 @@
-package com.stackbytes.model.dto;
+package com.stackbytes.model;
 
 import lombok.Builder;
 import lombok.Data;

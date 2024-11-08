@@ -1,4 +1,4 @@
-package com.stackbytes.model.dto;
+package com.stackbytes.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

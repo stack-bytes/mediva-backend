@@ -1,8 +1,8 @@
 package com.stackbytes.controller;
 
-import com.stackbytes.model.dto.IllnessCreateRequestDto;
-import com.stackbytes.model.dto.IllnessCreateResponseDto;
-import com.stackbytes.model.dto.IllnessGetResponseDto;
+import com.stackbytes.model.IllnessCreateRequestDto;
+import com.stackbytes.model.IllnessCreateResponseDto;
+import com.stackbytes.model.IllnessGetResponseDto;
 import com.stackbytes.service.IllnessService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +28,7 @@ public class IllnessController {
 
     @CrossOrigin
     @GetMapping()
-    public ResponseEntity<List<IllnessGetResponseDto>> getIllness(@RequestParam String userId){
+    public ResponseEntity<List<IllnessGetResponseDto>> getIllnesses(@RequestParam String userId){
         return ResponseEntity.ok(illnessService.getIllness(userId));
     }
 
@@ -39,5 +39,7 @@ public class IllnessController {
                 ResponseEntity.ok("Symptom added succesfully") :
                 ResponseEntity.status(HttpStatus.NOT_FOUND).body("Could not add symptom");
     }
+
+
 
 }

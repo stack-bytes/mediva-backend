@@ -2,9 +2,9 @@ package com.stackbytes.service;
 
 import com.mongodb.client.result.UpdateResult;
 import com.stackbytes.model.Illness;
-import com.stackbytes.model.dto.IllnessCreateRequestDto;
-import com.stackbytes.model.dto.IllnessCreateResponseDto;
-import com.stackbytes.model.dto.IllnessGetResponseDto;
+import com.stackbytes.model.IllnessCreateRequestDto;
+import com.stackbytes.model.IllnessCreateResponseDto;
+import com.stackbytes.model.IllnessGetResponseDto;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;

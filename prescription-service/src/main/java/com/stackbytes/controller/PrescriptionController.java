@@ -1,7 +1,7 @@
 package com.stackbytes.controller;
 
-import com.stackbytes.model.dto.PrescriptionCreateRequestDto;
-import com.stackbytes.model.dto.PrescriptionCreateResponseDto;
+import com.stackbytes.model.PrescriptionCreateRequestDto;
+import com.stackbytes.model.PrescriptionCreateResponseDto;
 import com.stackbytes.service.PrescriptionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
