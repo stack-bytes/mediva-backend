@@ -1,6 +1,7 @@
 package com.stackbytes.controllers;
 
 import com.stackbytes.models.LoginData;
+import com.stackbytes.models.RegisterRequestDto;
 import com.stackbytes.models.ResponseJson;
 import com.stackbytes.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +24,8 @@ public class UserController {
     }
     @CrossOrigin
     @PostMapping("/register")
-    public ResponseJson registerUser(@RequestBody User user) {
-        return userService.registerUser(user);
+    public ResponseJson registerUser(@RequestBody RegisterRequestDto registerRequestDto) {
+        return userService.registerUser(registerRequestDto);
     }
     @CrossOrigin
     @GetMapping("/test")
