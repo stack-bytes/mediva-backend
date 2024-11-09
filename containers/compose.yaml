@@ -41,7 +41,25 @@ services:
     ports:
       - "8085:8085"
 
-
+  nginx-gateway:
+    build: gateway
+    container_name: gateway
+    ports:
+      - "80:80"
+    volumes:
+      - ./gateway/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - symptom-service
+      - prescription-service
+      - map-service
+      - illness-service
+      - group-service
+      - appointment-service
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: zipkin-service
+    ports:
+      - "9411:9411"
 
 volumes:
   data: {}
