@@ -2,13 +2,13 @@ version: '3.8'
 
 services:
   shared-storage:
-    build: .
+    build: shared-storage
     container_name: shared-storage
     ports:
       - "9000:9000"
       - "9001:9001"
     volumes:
-      - data:/home/jarvx/Documents/MedivaBackend/mediva-backend/containers/shared-storage/data
+      - ./shared-storage-data:/data # system - container
     image: "shared-storage"
 
 volumes:
