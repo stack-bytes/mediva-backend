@@ -7,6 +7,8 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
+import com.stackbytes.utils.QuerryingUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,9 +16,12 @@ import java.util.List;
 public class SymptomService {
 
     private final MongoTemplate mongoTemplate;
+    private final QuerryingUtils<Symptom, String> querryingUtils;
 
-    public SymptomService(MongoTemplate mongoTemplate) {
+
+    public SymptomService(MongoTemplate mongoTemplate, QuerryingUtils<Symptom, String> querryingUtils) {
         this.mongoTemplate = mongoTemplate;
+        this.querryingUtils = querryingUtils; //singleton by default
     }
 
 
@@ -47,6 +52,10 @@ public class SymptomService {
 
 
         return Pair.of(responseDto, true);
+    }
+
+    public List<Symptom> getSymptoms(String userId){
+        return querryingUtils.getKeyValueList("userId", userId, mongoTemplate, Symptom.class);
     }
 
     public Boolean verifySymptom (String symptomId){

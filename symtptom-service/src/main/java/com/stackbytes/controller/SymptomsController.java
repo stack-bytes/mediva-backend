@@ -1,5 +1,6 @@
 package com.stackbytes.controller;
 
+import com.stackbytes.model.Symptom;
 import com.stackbytes.model.dto.SymptomCreateRequestDto;
 import com.stackbytes.model.dto.SymptomCreateResponseDto;
 import com.stackbytes.service.SymptomService;
@@ -26,6 +27,13 @@ public class SymptomsController {
     public ResponseEntity<Boolean> verifySymptom(@RequestParam String symptomId){
         return ResponseEntity.ok(symptomService.verifySymptom(symptomId));
     }
+
+    @CrossOrigin
+    @GetMapping("/user")
+    public ResponseEntity<List<Symptom>>  getUserSymptoms(@RequestParam String userId){
+        return ResponseEntity.ok(symptomService.getSymptoms(userId));
+    }
+
 
     @CrossOrigin
     @PostMapping()
