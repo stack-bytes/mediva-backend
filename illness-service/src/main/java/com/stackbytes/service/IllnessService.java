@@ -1,5 +1,6 @@
 package com.stackbytes.service;
 
+import com.mongodb.client.MongoClient;
 import com.mongodb.client.result.UpdateResult;
 import com.stackbytes.model.Illness;
 import com.stackbytes.model.dto.IllnessCreateRequestDto;
@@ -27,10 +28,12 @@ public class IllnessService {
 
     private final MongoTemplate mongoTemplate;
     private final RestTemplate restTemplate;
+    private final MongoClient mongo;
 
-    IllnessService(MongoTemplate mongoTemplate, RestTemplate restTemplate) {
+    IllnessService(MongoTemplate mongoTemplate, RestTemplate restTemplate, MongoClient mongo) {
         this.mongoTemplate = mongoTemplate;
         this.restTemplate = restTemplate;
+        this.mongo = mongo;
     }
 
     public IllnessCreateResponseDto createIllness(IllnessCreateRequestDto illnessCreateRequestDto) {
@@ -83,7 +86,27 @@ public class IllnessService {
         return updatedObject.getMatchedCount() > 0;
     }
 
-    public List<IllnessGetResponseDto> getIllness(String userId) {
+    public IllnessGetResponseDto getIllnessById(String illnessId) {
+        Illness foundIllness = mongoTemplate.findById(illnessId, Illness.class);
+
+        if(foundIllness == null)
+            return null;
+
+        IllnessGetResponseDto foundIllnessDto = new IllnessGetResponseDto(
+                foundIllness.getId(),
+                foundIllness.getName(),
+                foundIllness.getDescription(),
+                foundIllness.getPacientId(),
+                foundIllness.getDoctorId(),
+                foundIllness.getPrescriptionId(),
+                foundIllness.getSymptomsId(),
+                foundIllness.getTags()
+        );
+
+        return  foundIllnessDto;
+    }
+
+    public List<IllnessGetResponseDto> getIllneses(String userId) {
         List<Illness> foundIllnesses = mongoTemplate.find(
                 new Query().addCriteria(Criteria.where("pacientId").is(userId)),
                 Illness.class

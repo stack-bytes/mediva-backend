@@ -29,8 +29,18 @@ public class IllnessController {
     @CrossOrigin
     @GetMapping()
     public ResponseEntity<List<IllnessGetResponseDto>> getIllnesses(@RequestParam String userId){
-        return ResponseEntity.ok(illnessService.getIllness(userId));
+        return ResponseEntity.ok(illnessService.getIllneses(userId));
     }
+
+    @CrossOrigin
+    @GetMapping("id")
+    public ResponseEntity<IllnessGetResponseDto> getIllnessById(@RequestParam String illnessId){
+        IllnessGetResponseDto illnessGetResponseDto = illnessService.getIllnessById(illnessId);
+        return illnessGetResponseDto != null ?
+                ResponseEntity.ok(illnessGetResponseDto) : ResponseEntity.notFound().build();
+    }
+
+
 
     @CrossOrigin
     @PatchMapping()

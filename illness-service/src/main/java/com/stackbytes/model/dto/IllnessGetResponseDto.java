@@ -1,11 +1,14 @@
 package com.stackbytes.model.dto;
 
+import com.stackbytes.model.Illness;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
 
 @Data
+@AllArgsConstructor
 @Builder
 public class IllnessGetResponseDto{
     private String id;
