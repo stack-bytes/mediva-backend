@@ -22,11 +22,13 @@ public class MapController {
         this.mapService = mapService;
     }
 
+    @CrossOrigin
     @PostMapping("util")
     public ResponseEntity<Boolean> createMapUtil(@RequestBody CreateMapUtilRequestDto createMapUtilRequestDto) {
         return mapService.createMapUtil(createMapUtilRequestDto) ? ResponseEntity.ok(true) : ResponseEntity.ok(false);
     }
 
+    @CrossOrigin
     @GetMapping("util")
     public ResponseEntity<List<NormalizedMapUtil>> getMapUtil() {
         return ResponseEntity.ok(mapService.getAllUtils());

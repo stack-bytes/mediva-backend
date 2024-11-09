@@ -3,12 +3,12 @@ package com.stackbytes.service;
 import com.stackbytes.model.Appointment;
 import com.stackbytes.model.dto.CreateAppointmentRequestDto;
 import com.stackbytes.model.dto.CreateAppointmentResponseDto;
+import com.stackbytes.utils.QuerryingUtils;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
-import com.stackbytes.utils.QuerryingUtils;
 
 import java.util.List;
 

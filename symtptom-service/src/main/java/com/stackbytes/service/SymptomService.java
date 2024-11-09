@@ -3,11 +3,11 @@ package com.stackbytes.service;
 import com.stackbytes.model.Symptom;
 import com.stackbytes.model.dto.SymptomCreateRequestDto;
 import com.stackbytes.model.dto.SymptomCreateResponseDto;
+import com.stackbytes.utils.QuerryingUtils;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
-import com.stackbytes.utils.QuerryingUtils;
 
 import java.util.ArrayList;
 import java.util.List;

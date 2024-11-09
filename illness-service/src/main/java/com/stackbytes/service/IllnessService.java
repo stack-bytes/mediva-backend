@@ -24,6 +24,7 @@ public class IllnessService {
 
     private final String SymptomServiceAddress = "http://localhost:8084/";
 
+
     /* Templates */
 
     private final MongoTemplate mongoTemplate;

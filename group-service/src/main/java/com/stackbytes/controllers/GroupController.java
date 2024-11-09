@@ -19,12 +19,14 @@ public class GroupController {
         this.groupService = groupService;
     }
 
+    @CrossOrigin
     @PostMapping("/")
     public ResponseEntity<GroupCreateResponseTdo> createGroup(@RequestBody GroupCreateRequestTdo groupCreateRequestTdo) {
         GroupCreateResponseTdo groupCreateResponseTdo = groupService.createGroup(groupCreateRequestTdo);
         return ResponseEntity.ok(groupCreateResponseTdo);
     }
 
+    @CrossOrigin
     @PatchMapping("/")
     public ResponseEntity<String> addUserToGroup(@RequestParam String userId, @RequestParam String groupId) {
         return groupService.addUserToGroup(userId, groupId)  ?
@@ -33,6 +35,7 @@ public class GroupController {
                 ResponseEntity.badRequest().body("User not added to group");
     }
 
+    @CrossOrigin
     @GetMapping("/")
     public ResponseEntity<Group> getGroup(@RequestParam String groupId) {
         return ResponseEntity.ok(groupService.getGroupById(groupId));
