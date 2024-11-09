@@ -1,11 +1,7 @@
 package com.stackbytes.services;
 
-import brave.Response;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.stackbytes.models.LoginData;
-import com.stackbytes.models.ResponseJson;
-import com.stackbytes.models.User;
-import com.stackbytes.models.UsersLoginResponseDto;
+import com.stackbytes.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -14,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import org.mindrot.jbcrypt.BCrypt;
 
+import java.util.Date;
 import java.util.HashMap;
 
 @Service
@@ -30,21 +27,18 @@ public class UserService {
         this.mongoTemplate = mongoTemplate;
         this.objectMapper = objectMapper;
     }
-    public ResponseJson verifyMedic(User user) {
-        if(user == null){
-            return ResponseJson.builder().code(404).status(false).message("User cannot be null").build();
+    public ResponseJson verifyMedic(Medic medic) {
+        ContactInfo contactInfo = medic.getContactInfo();
+        Medic findMedic = mongoTemplate.findOne(new Query(Criteria.where("email").is(contactInfo.getEmail())), Medic.class);
+        if (findMedic == null) {
+            return ResponseJson.builder().code(404).status(false).message("Medic does not exist").build();
+        }
+        if (findMedic.getGpg() == null) {
+            return ResponseJson.builder().code(404).status(false).message("Medic does not have a GPG key").build();
         }
         try {
-            User userExists = mongoTemplate.findOne(new Query(Criteria.where("email").is(user.getEmail())), User.class);
-            if (userExists == null) {
-                return ResponseJson.builder().code(404).status(false).message("User not found").build();
-            }
-            if (userExists.isMedic()) {
-                HashMap<String,String> gpg = userExists.getGpg();
-                return ResponseJson.builder().code(200).status(true).message("User is a medic").gpg(gpg).build();
-            } else {
-                return ResponseJson.builder().code(404).status(false).message("User is not a medic").build();
-            }
+            HashMap<String, String> gpg = findMedic.getGpg();
+            return ResponseJson.builder().code(200).status(true).message("Medic verified").gpg(gpg).build();
         } catch (Exception e) {
             return ResponseJson.builder().code(500).status(false).message("Internal server error").build();
         }
@@ -58,49 +52,70 @@ public class UserService {
             return ResponseJson.builder().code(404).status(false).message("Email or password cannot be null").build();
         }
         try {
-            User user = mongoTemplate.findOne(new Query(Criteria.where("email").is(loginData.getEmail())), User.class);
+          User user = mongoTemplate.findOne(new Query(Criteria.where("email").is(loginData.getEmail())), User.class);
             if (user == null) {
-                return ResponseJson.builder().code(404).status(false).message("User not found").build();
-            }
-            if (BCrypt.checkpw(loginData.getPassword(), user.getPassword())) {
-                UsersLoginResponseDto responseDto = UsersLoginResponseDto.builder()
-                        .id(user.getId())
-                        .email(user.getEmail())
-                        .username(user.getUsername())
-                        .isDoctor(user.isMedic())
-                        .fullName(user.getFullName())
-                        .build();
-                String jsonStringTokenContent = objectMapper.writeValueAsString(responseDto);
-                String token = jwtUtil.getToken(jsonStringTokenContent);
-                System.out.println(jsonStringTokenContent);
-                return ResponseJson.builder()
-                        .code(200)
-                        .status(true)
-                        .message("User logged in")
-                        .token(token)
-                        .build();
+                Medic medic = mongoTemplate.findOne(new Query(Criteria.where("email").is(loginData.getEmail())), Medic.class);
+                if (medic == null) {
+                    return ResponseJson.builder().code(404).status(false).message("User or medic not found").build();
+                } else {
+                    if (BCrypt.checkpw(loginData.getPassword(), medic.getPassword())) {
+                        String jsonStringTokenContent = objectMapper.writeValueAsString(medic);
+                        String token = jwtUtil.getToken(jsonStringTokenContent);
+                        return ResponseJson.builder().code(200).status(true).message("Medic logged in").token(token).build();
+                    } else {
+                        return ResponseJson.builder().code(404).status(false).message("Invalid password").build();
+                    }
+                }
             } else {
-                return ResponseJson.builder().code(404).status(false).message("Incorrect password").build();
+                if (BCrypt.checkpw(loginData.getPassword(), user.getPassword())) {
+                    String jsonStringTokenContent = objectMapper.writeValueAsString(user);
+                    String token = jwtUtil.getToken(jsonStringTokenContent);
+                    return ResponseJson.builder().code(200).status(true).message("User logged in").token(token).build();
+                } else {
+                    return ResponseJson.builder().code(404).status(false).message("Invalid password").build();
+                }
             }
-        } catch (Exception e) {
+        }  catch (Exception e) {
             return ResponseJson.builder().code(500).status(false).message("Internal server error").build();
         }
     }
-    public ResponseJson registerUser(User user){
-        if(user == null){
+    public ResponseJson registerUser(RegisterRequestDto registerRequestDto) {
+        if(registerRequestDto == null){
             return ResponseJson.builder().code(404).status(false).message("User cannot be null").build();
         }
         try {
-            User userExists = mongoTemplate.findOne(new Query(Criteria.where("email").is(user.getEmail())), User.class);
-            if (userExists != null) {
-                return ResponseJson.builder().code(404).status(false).message("User already exists").build();
-            }
-            user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
-            try {
-                mongoTemplate.save(user);
-                return ResponseJson.builder().code(200).status(true).message("User registered").build();
-            } catch (Exception e) {
-                return ResponseJson.builder().code(500).status(false).message("Internal server error").build();
+            User user = registerRequestDto.getUser();
+            if(user == null) {
+                Medic medic = registerRequestDto.getMedic();
+                ContactInfo contactInfo = medic.getContactInfo();
+                Medic findMedic = mongoTemplate.findOne(new Query(Criteria.where("email").is(contactInfo.getEmail())), Medic.class);
+                if (findMedic != null) {
+                    return ResponseJson.builder().code(404).status(false).message("Medic already exists").build();
+                }
+                medic.setPassword(BCrypt.hashpw(medic.getPassword(), BCrypt.gensalt()));
+                medic.setCreatedAt(new Date());
+                medic.setUpdatedAt(new Date());
+                medic.setGpg(gpgKeyGenerator.generateKey(contactInfo.getEmail(), medic.getPassword()));
+                try {
+                    mongoTemplate.save(medic);
+                    return ResponseJson.builder().code(200).status(true).message("Medic registered").build();
+                } catch (Exception e) {
+                    return ResponseJson.builder().code(500).status(false).message("Internal server error").build();
+                }
+            } else {
+                User findUser = mongoTemplate.findOne(new Query(Criteria.where("email").is(user.getEmail())), User.class);
+                if (findUser != null) {
+                    return ResponseJson.builder().code(404).status(false).message("User already exists").build();
+                }
+                user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
+                user.setCreatedAt(new Date());
+                user.setUpdatedAt(new Date());
+                try {
+                    mongoTemplate.save(user);
+                    return ResponseJson.builder().code(200).status(true).message("User registered").build();
+                } catch (Exception e) {
+                    return ResponseJson.builder().code(500).status(false).message("Internal server error").build();
+                }
             }
         } catch (Exception e) {
             return ResponseJson.builder().code(500).status(false).message("Internal server error").build();

@@ -3,31 +3,31 @@ package com.stackbytes.models;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
-import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.scheduling.support.SimpleTriggerContext;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-@Document(collection = "users")
+@Document(collection = "medics")
+@Data
 @Builder
 @Getter
-@Setter
-@Data
-public class User {
+public class Medic {
     @Id
     private String id;
-    private String username;
-    private String email;
+    private String medicalId;
     private String password;
-    private String fullName;
-    private String phone;
-    private String avatar;
-    private Medic medic;
-    private List<String> doctorsId;
+    private Date activeSince;
+    private String speciality;
+    private String grade;
+    private HashMap<String,String> gpg;
+    private String workPlace;
+    private double ratings;
+    private String bio;
+    private ContactInfo contactInfo;
+    private List<String> userId;
     private Date createdAt;
     private Date updatedAt;
 }
