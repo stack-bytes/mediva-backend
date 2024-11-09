@@ -30,9 +30,28 @@ public class UserService {
         this.mongoTemplate = mongoTemplate;
         this.objectMapper = objectMapper;
     }
+    public ResponseJson verifyMedic(User user) {
+        if(user == null){
+            return ResponseJson.builder().code(404).status(false).message("User cannot be null").build();
+        }
+        try {
+            User userExists = mongoTemplate.findOne(new Query(Criteria.where("email").is(user.getEmail())), User.class);
+            if (userExists == null) {
+                return ResponseJson.builder().code(404).status(false).message("User not found").build();
+            }
+            if (userExists.isMedic()) {
+                HashMap<String,String> gpg = userExists.getGpg();
+                return ResponseJson.builder().code(200).status(true).message("User is a medic").gpg(gpg).build();
+            } else {
+                return ResponseJson.builder().code(404).status(false).message("User is not a medic").build();
+            }
+        } catch (Exception e) {
+            return ResponseJson.builder().code(500).status(false).message("Internal server error").build();
+        }
+    }
     public String test() {
         HashMap<String, String> response = gpgKeyGenerator.generateKey("test", "test");
-        return "public key : " + response.get("publicKey") + " private key : " + response.get("privateKey");
+        return "public key : " + response.get("publicKey") + "\nprivate key : " + response.get("privateKey") + "\nAESKey : "   + response.get("AESKey");
     }
     public ResponseJson loginUser(LoginData loginData) {
         if (loginData.getEmail() == null || loginData.getPassword() == null) {
