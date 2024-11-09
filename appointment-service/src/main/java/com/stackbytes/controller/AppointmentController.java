@@ -20,11 +20,13 @@ public class AppointmentController {
         this.appointmentService = appointmentService;
     }
 
+    @CrossOrigin
     @PostMapping
     public ResponseEntity<CreateAppointmentResponseDto> createAppointment(@RequestBody CreateAppointmentRequestDto createAppointmentRequestDto) {
         return ResponseEntity.ok(appointmentService.createAppointment(createAppointmentRequestDto));
     }
 
+    @CrossOrigin
     @GetMapping("pacient")
     public ResponseEntity<List<Appointment>> getUserAppointments(@RequestParam String userId) {
         return ResponseEntity.ok(appointmentService.getKeyAppointments(userId, "pacientId"));

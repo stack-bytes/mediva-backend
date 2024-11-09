@@ -29,7 +29,7 @@ public class SymptomsController {
     }
 
     @CrossOrigin
-    @GetMapping("/user")
+    @GetMapping("user")
     public ResponseEntity<List<Symptom>>  getUserSymptoms(@RequestParam String userId){
         return ResponseEntity.ok(symptomService.getSymptoms(userId));
     }
