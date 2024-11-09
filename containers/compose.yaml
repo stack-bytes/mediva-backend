@@ -8,8 +8,40 @@ services:
       - "9000:9000"
       - "9001:9001"
     volumes:
-      - ./shared-storage-data:/data # system - container
+      - .containers/shared-storage-data:/data # system - container
     image: "shared-storage"
+  symptom-service:
+    build: ../symtptom-service/
+    container_name: symptom-service
+    ports:
+      - "8084:8084"
+  prescription-service:
+    build: ../prescription-service/
+    container_name: prescription-service
+    ports:
+      - "8081:8081"
+  map-service:
+    build: ../map-service/
+    container_name: map-service
+    ports:
+      - "8086:8086"
+  illness-service:
+    build: ../illness-service/
+    container_name: illness-service
+    ports:
+      - "8082:8082"
+  group-service:
+    build: ../group-service/
+    container_name: group-service
+    ports:
+      - "8087:8087"
+  appointment-service:
+    build: ../appointment-service/
+    container_name: appointment-service
+    ports:
+      - "8085:8085"
+
+
 
 volumes:
   data: {}
