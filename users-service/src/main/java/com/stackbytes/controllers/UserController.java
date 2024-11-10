@@ -29,7 +29,7 @@ public class UserController {
     }
     @CrossOrigin
     @GetMapping("/test")
-    public String test() {
+    public String test() throws Exception{
         return userService.test();
     }
 }

@@ -1,15 +1,19 @@
 package com.stackbytes.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ser.Serializers;
 import com.stackbytes.models.*;
+import org.bouncycastle.openpgp.PGPKeyRingGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 import org.mindrot.jbcrypt.BCrypt;
 
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -17,7 +21,7 @@ import java.util.HashMap;
 public class UserService {
     private final MongoTemplate mongoTemplate;
     @Autowired
-    private GPGKeyGenerator gpgKeyGenerator;
+    private GPGKeyGenerator2 gpgKeyGenerator2;
     @Autowired
     private JwtUtil jwtUtil;
     @Autowired
@@ -37,46 +41,60 @@ public class UserService {
             return ResponseJson.builder().code(404).status(false).message("Medic does not have a GPG key").build();
         }
         try {
-            HashMap<String, String> gpg = findMedic.getGpg();
+            Pair<String,String> gpg = medic.getGpg();
             return ResponseJson.builder().code(200).status(true).message("Medic verified").gpg(gpg).build();
         } catch (Exception e) {
             return ResponseJson.builder().code(500).status(false).message("Internal server error").build();
         }
     }
-    public String test() {
-        HashMap<String, String> response = gpgKeyGenerator.generateKey("test", "test");
-        return "public key : " + response.get("publicKey") + "\nprivate key : " + response.get("privateKey") + "\nAESKey : "   + response.get("AESKey");
+    public String test() throws Exception{
+        PGPKeyRingGenerator keyGenerator = gpgKeyGenerator2.generateKey("rares");
+        byte[] publicKey = gpgKeyGenerator2.getPublicKeyBytes(keyGenerator);
+        byte[] privateKey = gpgKeyGenerator2.getPrivateKeyBytes(keyGenerator);
+        return "public key : " + Base64.getEncoder().encodeToString(publicKey) + "\nprivate key : " + Base64.getEncoder().encodeToString(privateKey);
     }
     public ResponseJson loginUser(LoginData loginData) {
         if (loginData.getEmail() == null || loginData.getPassword() == null) {
             return ResponseJson.builder().code(404).status(false).message("Email or password cannot be null").build();
         }
-        try {
-          User user = mongoTemplate.findOne(new Query(Criteria.where("email").is(loginData.getEmail())), User.class);
-            if (user == null) {
-                Medic medic = mongoTemplate.findOne(new Query(Criteria.where("email").is(loginData.getEmail())), Medic.class);
-                if (medic == null) {
-                    return ResponseJson.builder().code(404).status(false).message("User or medic not found").build();
-                } else {
-                    if (BCrypt.checkpw(loginData.getPassword(), medic.getPassword())) {
-                        String jsonStringTokenContent = objectMapper.writeValueAsString(medic);
-                        String token = jwtUtil.getToken(jsonStringTokenContent);
-                        return ResponseJson.builder().code(200).status(true).message("Medic logged in").token(token).build();
-                    } else {
-                        return ResponseJson.builder().code(404).status(false).message("Invalid password").build();
-                    }
-                }
-            } else {
-                if (BCrypt.checkpw(loginData.getPassword(), user.getPassword())) {
-                    String jsonStringTokenContent = objectMapper.writeValueAsString(user);
-                    String token = jwtUtil.getToken(jsonStringTokenContent);
-                    return ResponseJson.builder().code(200).status(true).message("User logged in").token(token).build();
-                } else {
-                    return ResponseJson.builder().code(404).status(false).message("Invalid password").build();
-                }
+        if(loginData.isMedic()) {
+            Medic medic = mongoTemplate.findOne(new Query(Criteria.where("contactInfo.email").is(loginData.getEmail())), Medic.class);
+            if (medic == null) {
+                return ResponseJson.builder().code(404).status(false).message("Medic not found").build();
             }
-        }  catch (Exception e) {
-            return ResponseJson.builder().code(500).status(false).message("Internal server error").build();
+            if (BCrypt.checkpw(loginData.getPassword(), medic.getPassword())) {
+                String jsonStringTokenContent = null;
+                try {
+                    jsonStringTokenContent = objectMapper.writeValueAsString(medic);
+                } catch (Exception e) {
+                    return ResponseJson.builder().code(500).status(false).message(e.getMessage()).build();
+                }
+                String token = jwtUtil.getToken(jsonStringTokenContent);
+                return ResponseJson.builder().code(200).status(true).message("Medic logged in").token(token).build();
+            } else {
+                return ResponseJson.builder().code(404).status(false).message("Invalid password").build();
+            }
+        } else {
+            try {
+            User user = mongoTemplate.findOne(new Query(Criteria.where("email").is(loginData.getEmail())), User.class);
+            if (user == null) {
+                return ResponseJson.builder().code(404).status(false).message("User not found").build();
+            }
+            if (BCrypt.checkpw(loginData.getPassword(), user.getPassword())) {
+                String jsonStringTokenContent = null;
+                try {
+                    jsonStringTokenContent = objectMapper.writeValueAsString(user);
+                } catch (Exception e) {
+                    return ResponseJson.builder().code(500).status(false).message(e.getMessage()).build();
+                }
+                String token = jwtUtil.getToken(jsonStringTokenContent);
+                return ResponseJson.builder().code(200).status(true).message("User logged in").token(token).build();
+            } else {
+                return ResponseJson.builder().code(404).status(false).message("Invalid password").build();
+            }
+            } catch (Exception e) {
+                return ResponseJson.builder().code(500).status(false).message(e.getMessage()).build();
+            }
         }
     }
     public ResponseJson registerUser(RegisterRequestDto registerRequestDto) {
@@ -88,19 +106,25 @@ public class UserService {
             if(user == null) {
                 Medic medic = registerRequestDto.getMedic();
                 ContactInfo contactInfo = medic.getContactInfo();
-                Medic findMedic = mongoTemplate.findOne(new Query(Criteria.where("email").is(contactInfo.getEmail())), Medic.class);
+                Medic findMedic = mongoTemplate.findOne(new Query(Criteria.where("contactInfo.email").is(contactInfo.getEmail())), Medic.class);
                 if (findMedic != null) {
                     return ResponseJson.builder().code(404).status(false).message("Medic already exists").build();
                 }
-                medic.setPassword(BCrypt.hashpw(medic.getPassword(), BCrypt.gensalt()));
-                medic.setCreatedAt(new Date());
-                medic.setUpdatedAt(new Date());
-                medic.setGpg(gpgKeyGenerator.generateKey(contactInfo.getEmail(), medic.getPassword()));
+                    medic.setPassword(BCrypt.hashpw(medic.getPassword(), BCrypt.gensalt()));
+                    medic.setCreatedAt(new Date());
+                    medic.setUpdatedAt(new Date());
+                    PGPKeyRingGenerator keyGenerator = gpgKeyGenerator2.generateKey(contactInfo.getEmail());
+                    String publicKey = gpgKeyGenerator2.getPublicKeyBytes(keyGenerator).toString();
+                    String privateKey = gpgKeyGenerator2.getPrivateKeyBytes(keyGenerator).toString();
+                    String publicKeyString = Base64.getEncoder().encodeToString(publicKey.getBytes());
+                    String privateKeyString = Base64.getEncoder().encodeToString(privateKey.getBytes());
+                    Pair<String,String> gpg = Pair.of(publicKeyString,privateKeyString);
+                    medic.setGpg(gpg);
                 try {
-                    mongoTemplate.save(medic);
+                    mongoTemplate.insert(medic);
                     return ResponseJson.builder().code(200).status(true).message("Medic registered").build();
                 } catch (Exception e) {
-                    return ResponseJson.builder().code(500).status(false).message("Internal server error").build();
+                    return ResponseJson.builder().code(500).status(false).message(e.getMessage()).build();
                 }
             } else {
                 User findUser = mongoTemplate.findOne(new Query(Criteria.where("email").is(user.getEmail())), User.class);

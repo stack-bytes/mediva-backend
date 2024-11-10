@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.Getter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.util.Pair;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -22,7 +23,7 @@ public class Medic {
     private Date activeSince;
     private String speciality;
     private String grade;
-    private HashMap<String,String> gpg;
+    private Pair<String,String> gpg;
     private String workPlace;
     private double ratings;
     private String bio;

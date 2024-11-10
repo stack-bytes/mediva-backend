@@ -67,16 +67,15 @@
             <version>2.3.1</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.bouncycastle</groupId>
-            <artifactId>bcprov-jdk15on</artifactId>
-            <version>1.70</version> <!-- Use the latest stable version -->
-        </dependency>
-
         <!-- Bouncy Castle PKCS library for key pair generation -->
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcpg-jdk15on</artifactId>
+            <version>1.70</version> <!-- Use the latest stable version -->
+        </dependency>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk15on</artifactId>
             <version>1.70</version> <!-- Use the latest stable version -->
         </dependency>
         <dependency>
