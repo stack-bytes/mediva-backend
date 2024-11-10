@@ -17,7 +17,7 @@ public class SymptomCreateRequestDto {
     private String description;
     private String userId;
     private List<String> doctorId;
-    private boolean emergency;
+    private Boolean  emergency;
     private Date date;
     private int severity;
 }

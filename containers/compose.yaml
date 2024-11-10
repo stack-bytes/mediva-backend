@@ -55,6 +55,7 @@ services:
       - illness-service
       - group-service
       - appointment-service
+      - shared-storage
   zipkin:
     image: openzipkin/zipkin
     container_name: zipkin-service

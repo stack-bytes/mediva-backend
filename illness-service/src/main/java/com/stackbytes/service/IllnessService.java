@@ -22,7 +22,7 @@ import java.util.List;
 @Service
 public class IllnessService {
 
-    private final String SymptomServiceAddress = "http://localhost:8084/";
+    private final String SymptomServiceAddress = "http://symptom-service:8084/";
 
 
     /* Templates */

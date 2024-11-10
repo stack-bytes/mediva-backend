@@ -5,6 +5,8 @@ import com.stackbytes.model.dto.SymptomCreateRequestDto;
 import com.stackbytes.model.dto.SymptomCreateResponseDto;
 import com.stackbytes.utils.QuerryingUtils;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
@@ -36,7 +38,7 @@ public class SymptomService {
                     .description(s.getDescription())
                     .userId(s.getUserId())
                     .severity(s.getSeverity())
-                    .emergency(s.isEmergency())
+                    .emergency(s.getEmergency())
                     .date(s.getDate())
                     .doctorId(s.getDoctorId())
                     .build();
@@ -60,7 +62,9 @@ public class SymptomService {
     }
 
     public List<Symptom> getSymptoms(String userId){
-        return querryingUtils.getKeyValueList("userId", userId, mongoTemplate, Symptom.class);
+        List<Symptom> results = mongoTemplate.find(Query.query(Criteria.where("userId").is(userId)), Symptom.class);
+        System.out.println(results.getLast().getDate());
+        return results;
     }
 
     public Boolean verifySymptom (String symptomId){
