@@ -19,6 +19,7 @@ public class GroupController {
         this.groupService = groupService;
     }
 
+
     @CrossOrigin
     @PostMapping("/")
     public ResponseEntity<GroupCreateResponseTdo> createGroup(@RequestBody GroupCreateRequestTdo groupCreateRequestTdo) {

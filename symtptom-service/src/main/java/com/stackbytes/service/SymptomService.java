@@ -36,7 +36,12 @@ public class SymptomService {
                     .description(s.getDescription())
                     .userId(s.getUserId())
                     .severity(s.getSeverity())
+                    .emergency(s.getEmergency())
+                    .date(s.getDate())
+                    .doctorId(s.getDoctorId())
                     .build();
+
+            System.out.println("DoctorID: " + s.getDoctorId() + "\n" + "UserId:" + s.getUserId());
 
             Symptom createdSymptom = mongoTemplate.insert(symptom);
 

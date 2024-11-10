@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.Date;
 import java.util.List;
 
 
@@ -26,5 +27,5 @@ public class Illness {
     private String prescriptionId;
     private List<String> symptomsId;
     private List<String> tags;
-
+    private Date date;
 }

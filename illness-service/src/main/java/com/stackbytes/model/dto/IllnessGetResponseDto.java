@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -20,4 +21,5 @@ public class IllnessGetResponseDto{
     private String prescriptionId;
     private List<String> symptomsId;
     private List<String> tags;
+    private Date date;
 }

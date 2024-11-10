@@ -44,6 +44,7 @@ public class IllnessService {
                 .doctorId(illnessCreateRequestDto.getDoctorId())
                 .pacientId(illnessCreateRequestDto.getPacientId())
                 .tags(illnessCreateRequestDto.getTags())
+                .date(illnessCreateRequestDto.getDate())
                 .symptomsId(illnessCreateRequestDto.getSymptomsId())
                 .prescriptionId(illnessCreateRequestDto.getPrescriptionId())
                 .build();
@@ -101,7 +102,8 @@ public class IllnessService {
                 foundIllness.getDoctorId(),
                 foundIllness.getPrescriptionId(),
                 foundIllness.getSymptomsId(),
-                foundIllness.getTags()
+                foundIllness.getTags(),
+                foundIllness.getDate()
         );
 
         return  foundIllnessDto;
