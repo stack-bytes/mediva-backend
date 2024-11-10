@@ -36,7 +36,7 @@ public class SymptomService {
                     .description(s.getDescription())
                     .userId(s.getUserId())
                     .severity(s.getSeverity())
-                    .emergency(s.getEmergency())
+                    .emergency(s.isEmergency())
                     .date(s.getDate())
                     .doctorId(s.getDoctorId())
                     .build();
