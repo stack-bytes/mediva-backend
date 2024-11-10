@@ -10,5 +10,4 @@ import lombok.Getter;
 public class ContactInfo {
     private String phone;
     private String email;
-    private String address;
 }

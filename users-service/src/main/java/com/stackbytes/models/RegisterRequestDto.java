@@ -5,9 +5,13 @@ import lombok.Data;
 import lombok.Getter;
 
 @Builder
-@Data
 @Getter
+@Data
 public class RegisterRequestDto {
     private User user;
     private Medic medic;
+    private boolean isMedic;
+    public boolean isMedic() {
+        return isMedic;
+    }
 }

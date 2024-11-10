@@ -24,7 +24,7 @@ public class UserController {
     }
     @CrossOrigin
     @PostMapping("/register")
-    public ResponseJson registerUser(@RequestBody RegisterRequestDto registerRequestDto) {
+    public ResponseJson registerUser(@RequestBody RegisterRequestDto registerRequestDto) throws Exception{
         return userService.registerUser(registerRequestDto);
     }
     @CrossOrigin
